@@ -46,17 +46,13 @@ class Ui(QtWidgets.QMainWindow):
         # MINIMIZE
         self.ui.pushButton_minimize.clicked.connect(lambda: self.showMinimized())
 
-        # MAXIMIZE RESTORE
-        globals()['state'] = 0
         def maximize():
-            if globals()['state'] == 0:
+            if not self.isMaximized():
                 self.showMaximized()
-                globals()['state'] = 1
                 self.ui.pushButton_max_rest.setToolTip("Restore")
                 self.ui.pushButton_max_rest.setStyleSheet(style.bts_title_bar_restore)
-            elif globals()['state'] == 1:
+            elif self.isMaximized():
                 self.setWindowState(QtCore.Qt.WindowNoState)
-                globals()['state'] = 0
                 self.ui.pushButton_max_rest.setToolTip("Maximize")
                 self.ui.pushButton_max_rest.setStyleSheet(style.bts_title_bar_maximize)
 
@@ -156,12 +152,10 @@ class Ui(QtWidgets.QMainWindow):
                 self.move(self.pos() + event.globalPos() - self.dragPos)
                 self.dragPos = event.globalPos()
                 event.accept()
-                if globals()['state']:
-                    globals()['state'] = 0
+                if self.isMaximized():
                     maximize()
                     self.setWindowState(QtCore.Qt.WindowNoState)
                     self.ui.pushButton_max_rest.setStyleSheet(style.bts_title_bar_maximize)
-                    globals()['state'] = 0
 
         self.ui.frame_topMenu.mouseMoveEvent = moveWindow
         self.ui.frame_labelTemp.mouseMoveEvent = moveWindow
@@ -295,4 +289,4 @@ if __name__ == "__main__":
     app = QtWidgets.QApplication(sys.argv)
     QtGui.QFontDatabase.addApplicationFont('fonts/Roboto-Regular.ttf')
     ui = Ui()
-    app.exec_()
+    sys.exit(app.exec_())
